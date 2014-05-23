@@ -98,6 +98,13 @@ module Turbot
       JSON.parse(RestClient.delete(server_req("/users/config_vars", :bot => bot, :key => key)).body)
     end
 
+    def send_drafts_to_angler(bot, batch)
+      RestClient.post(
+        server_req("/users/send_drafts_to_angler"),
+        {:bot => bot,
+          :batch => batch}).body
+    end
+
     private
 
     def server_req(path, params={})
