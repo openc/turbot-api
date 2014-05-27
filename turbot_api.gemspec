@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.version = Turbot::VERSION
 
   gem.author      = "Turbot"
-  gem.email       = "support@turbot.com"
+  gem.email       = "support@opencorporates.com"
   gem.homepage    = "http://opencorporates.com/"
   gem.summary     = "Client library to deploy apps on Turbot."
   gem.description = "Client library to deploy apps on Turbot."
@@ -14,8 +14,6 @@ Gem::Specification.new do |gem|
 
   gem.files = %x{ git ls-files }.split("\n").select { |d| d =~ %r{^(License|README|bin/|data/|ext/|lib/|spec/|test/)} }
 
-  gem.add_dependency "netrc",       "~> 0.7.7"
   gem.add_dependency "rest-client", "~> 1.6.1"
-  gem.add_dependency "launchy",     ">= 0.3.2"
   gem.add_dependency "rubyzip"
 end
