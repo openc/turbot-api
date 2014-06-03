@@ -103,18 +103,35 @@ module Turbot
         url = @routes.url_helpers.send("api_#{named_route}_url", :bot_id => params[:bot_id])
       end
 
-      if method == :get
-        response = RestClient.send(method, url, :params => params.merge(:api_key => @api_key))
-      else
-        response = RestClient.send(method, url, params.merge(:api_key => @api_key))
+      begin
+        if method == :get
+          response = RestClient.send(method, url, :params => params.merge(:api_key => @api_key))
+        else
+          response = RestClient.send(method, url, params.merge(:api_key => @api_key))
+        end
+        SuccessResponse.new(response)
+      rescue RestClient::Exception => e
+        FailureResponse.new(e.response)
       end
+    end
 
-      # TODO work out what to do here - wrap response in APIResponse?
-      debugger
-      if response.body.blank?
-        {}
-      else
-        JSON.parse(response.body)
+    class SuccessResponse
+      attr_reader :message, :data
+
+      def initialize(response)
+        data = JSON.parse(response.body, :symbolize_names => true)
+        @message = data[:message]
+        @data = data[:data]
+      end
+    end
+
+    class FailureResponse
+      attr_reader :message, :data
+
+      def initialize(response)
+        data = JSON.parse(response.body, :symbolize_names => true)
+        @error_code = data[:error_code]
+        @message = data[:message]
       end
     end
   end
