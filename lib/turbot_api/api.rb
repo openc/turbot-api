@@ -1,3 +1,5 @@
+require 'action_dispatch'
+require 'debugger'
 require 'json'
 require 'rest_client'
 
@@ -12,10 +14,29 @@ module Turbot
       @scheme = params[:scheme]
       @ssl_verify_peer = params[:ssl_verify_peer]
       @api_key = params[:api_key] || get_api_key_for_credentials(@username, @password)["api_key"]
+
+      @routes = ActionDispatch::Routing::RouteSet.new
+
+      @routes.draw do
+        namespace :api do
+          resources :bots, :only => [:index, :create] do
+            resource :code, :only => [:update], :controller => 'code'
+            resource :draft_data, :only => [:update]
+          end
+
+          resource :user, :only => [:show] do
+            resource :api_key, :only => [:show]
+          end
+        end
+      end
+
+      @routes.default_url_options[:host] = @host
+      @routes.default_url_options[:port] = @port
     end
 
     def get_user
-      response = RestClient.get(server_req("/users/get_user"))
+      # TODO move away from using RestClient directly
+      response = RestClient.get(server_req("/api/user"))
       JSON.parse(response)
     end
 
@@ -24,85 +45,39 @@ module Turbot
     end
 
     def get_api_key_for_credentials(user, password)
-      url = server_req("/users/api_key",
+      # TODO move away from using RestClient directly
+      url = server_req("/api/user/api_key",
         :email => user,
         :password => password)
       response = RestClient.get(url)
       JSON.parse(response)
     end
 
-    def get_keys
-      # return an array of ssh keys
-      ["jkjk"]
+    def list_bots
+      request(:get, :bots)
+    end
+
+    def show_bot(bot_id)
+      request(:get, :bot, :bot_id => bot_id)
+    end
+
+    def create_bot(bot_id, config)
+      request(:post, :bots, :bot => {:bot_id => bot_id, :config => config})
+    end
+
+    def update_draft_data(bot_id, config, batch)
+      request(:put, :bot_draft_data, :bot_id => bot_id, :config => config, :batch => batch)
+    end
+
+    def update_code(bot_id, archive)
+      request(:put, :bot_code, :bot_id => bot_id, :archive => archive)
     end
 
     def get_ssh_keys
-      # return an array of ssh keys
-      ["jkjk"]
+      []
     end
 
     def post_key(key)
-      # receive ssh key and associate with account
-    end
-
-    def delete_key(key)
-    end
-
-    def delete_keys
-    end
-
-    def read_logs(bot, opts={})
-      url = server_req("/users/read_logs", :bot => bot)
-      JSON.parse(RestClient.get(url))
-    end
-
-    def post_bot(data)
-      url = server_req("/users/post_bot")
-      begin
-        RestClient.post(url, data)
-      rescue => e
-        if e.response.match(/Gitlab::Error::NotFound/)
-          puts "That bot already exists!"
-          exit 0
-        elsif e.response.match(/MissingManifest/)
-          puts "ERROR: You didn't provide a manifest.json"
-          exit 1
-        else
-          raise
-        end
-      end
-      puts "Created bot #{data['bot_id']}"
-    end
-
-    def delete_bot(bot)
-      RestClient.delete(server_req("/users/delete_bot", {:bot => bot}))
-    end
-
-    def get_bots
-      JSON.parse(RestClient.get(server_req("/users/get_bots")).body)
-    end
-
-    def get_bot(bot)
-      JSON.parse(RestClient.get(server_req("/users/get_bot", :bot => bot)).body)
-    end
-
-    def put_config_vars(bot, vars)
-      JSON.parse(RestClient.post(server_req("/users/config_vars", :bot => bot, :vars => vars)).body)
-    end
-
-    def get_config_vars(bot)
-      JSON.parse(RestClient.get(server_req("/users/config_vars", :bot => bot)).body)
-    end
-
-    def delete_config_var(bot, key)
-      JSON.parse(RestClient.delete(server_req("/users/config_vars", :bot => bot, :key => key)).body)
-    end
-
-    def send_drafts_to_angler(bot, batch)
-      RestClient.post(
-        server_req("/users/send_drafts_to_angler"),
-        {:bot => bot,
-          :batch => batch}).body
     end
 
     private
@@ -119,6 +94,28 @@ module Turbot
       }
       args[:query] = query_string unless query_string.empty?
       URI::HTTP.build(args).to_s
+    end
+
+    def request(method, named_route, params={})
+      begin
+        url = @routes.url_helpers.send("api_#{named_route}_url")
+      rescue ActionController::UrlGenerationError
+        url = @routes.url_helpers.send("api_#{named_route}_url", :bot_id => params[:bot_id])
+      end
+
+      if method == :get
+        response = RestClient.send(method, url, :params => params.merge(:api_key => @api_key))
+      else
+        response = RestClient.send(method, url, params.merge(:api_key => @api_key))
+      end
+
+      # TODO work out what to do here - wrap response in APIResponse?
+      debugger
+      if response.body.blank?
+        {}
+      else
+        JSON.parse(response.body)
+      end
     end
   end
 end
