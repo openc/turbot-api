@@ -1,5 +1,4 @@
 require 'action_dispatch'
-require 'debugger'
 require 'json'
 require 'rest_client'
 
