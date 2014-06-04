@@ -22,6 +22,9 @@ module Turbot
           resources :bots, :only => [:index, :create] do
             resource :code, :only => [:update], :controller => 'code'
             resource :draft_data, :only => [:update]
+
+            post 'run/start', :to => 'api/runs#start'
+            post 'run/stop', :to => 'api/runs#stop'
           end
 
           resource :user, :only => [:show] do
@@ -73,6 +76,14 @@ module Turbot
       request(:put, :bot_code, :bot_id => bot_id, :archive => archive)
     end
 
+    def start_run(bot_id)
+      request(:post, :bot_run_start, :bot_id => bot_id)
+    end
+
+    def stop_run(bot_id)
+      request(:post, :bot_run_stop, :bot_id => bot_id)
+    end
+
     def get_ssh_keys
       []
     end
@@ -100,7 +111,7 @@ module Turbot
       begin
         url = @routes.url_helpers.send("api_#{named_route}_url")
       rescue ActionController::UrlGenerationError
-        url = @routes.url_helpers.send("api_#{named_route}_url", :bot_id => params[:bot_id])
+        url = @routes.url_helpers.send("api_#{named_route}_url", :bot_id => params.delete(:bot_id))
       end
 
       begin

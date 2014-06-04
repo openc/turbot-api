@@ -6,10 +6,10 @@ group :development, :test do
   gem "rake",  ">= 0.8.7"
   gem "rr",    "~> 1.0.2"
   gem "excon"
+  gem "debugger"
 end
 
 group :development do
-  gem "aws-s3"
   gem "fpm"
   gem "rubyzip"
 end
