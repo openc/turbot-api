@@ -2,7 +2,7 @@ require 'turbot_api'
 
 describe Turbot::API do
   before do
-    @api = Turbot::API.new(:api_key => 'key', :host => 'http://example.com')
+    @api = Turbot::API.new(:api_key => 'key', :host => 'example.com')
   end
 
   describe '#start_run' do

@@ -1,4 +1,3 @@
-require 'action_dispatch'
 require 'json'
 require 'rest_client'
 
@@ -13,27 +12,6 @@ module Turbot
       @scheme = params[:scheme]
       @ssl_verify_peer = params[:ssl_verify_peer]
       @api_key = params[:api_key] || get_api_key_for_credentials(@username, @password)["api_key"]
-
-      @routes = ActionDispatch::Routing::RouteSet.new
-
-      @routes.draw do
-        namespace :api do
-          resources :bots, :only => [:index, :create] do
-            resource :code, :only => [:update], :controller => 'code'
-            resource :draft_data, :only => [:update]
-
-            post 'run/start', :to => 'api/runs#start'
-            post 'run/stop', :to => 'api/runs#stop'
-          end
-
-          resource :user, :only => [:show] do
-            resource :api_key, :only => [:show]
-          end
-        end
-      end
-
-      @routes.default_url_options[:host] = @host
-      @routes.default_url_options[:port] = @port
     end
 
     def get_user
@@ -56,31 +34,31 @@ module Turbot
     end
 
     def list_bots
-      request(:get, :bots)
+      request(:get, "/api/bots")
     end
 
     def show_bot(bot_id)
-      request(:get, :bot, :bot_id => bot_id)
+      request(:get, "/api/bots/#{bot_id}")
     end
 
     def create_bot(bot_id, config)
-      request(:post, :bots, :bot => {:bot_id => bot_id, :config => config})
+      request(:post, "/api/bots", :bot => {:bot_id => bot_id, :config => config})
     end
 
     def update_draft_data(bot_id, config, batch)
-      request(:put, :bot_draft_data, :bot_id => bot_id, :config => config, :batch => batch)
+      request(:put, "/api/bots/#{bot_id}/draft_data", :config => config, :batch => batch)
     end
 
     def update_code(bot_id, archive)
-      request(:put, :bot_code, :bot_id => bot_id, :archive => archive)
+      request(:put, "/api/bots/#{bot_id}/code", :archive => archive)
     end
 
     def start_run(bot_id)
-      request(:post, :bot_run_start, :bot_id => bot_id)
+      request(:post, "/api/bots/#{bot_id}/run/start")
     end
 
     def stop_run(bot_id)
-      request(:post, :bot_run_stop, :bot_id => bot_id)
+      request(:post, "/api/bots/#{bot_id}/run/stop")
     end
 
     def get_ssh_keys
@@ -106,12 +84,14 @@ module Turbot
       URI::HTTP.build(args).to_s
     end
 
-    def request(method, named_route, params={})
-      begin
-        url = @routes.url_helpers.send("api_#{named_route}_url")
-      rescue ActionController::UrlGenerationError
-        url = @routes.url_helpers.send("api_#{named_route}_url", :bot_id => params.delete(:bot_id))
-      end
+    def request(method, path, params={})
+      args = {
+        :host => @host,
+        :port => @port,
+        :scheme => @scheme,
+        :path => path.strip
+      }
+      url = URI::HTTP.build(args).to_s
 
       begin
         if method == :get

@@ -16,5 +16,4 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency "rest-client", "~> 1.6.1"
   gem.add_dependency "rubyzip"
-  gem.add_dependency "actionpack", "~> 4.0.3"
 end
