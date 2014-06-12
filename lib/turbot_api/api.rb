@@ -98,7 +98,7 @@ module Turbot
       url = URI::HTTP.build(args).to_s
 
       begin
-        if method == :get
+        if method == :get || method == :delete
           response = RestClient.send(method, url, :params => params.merge(:api_key => @api_key))
         else
           response = RestClient.send(method, url, params.merge(:api_key => @api_key))
