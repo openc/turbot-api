@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    turbot-api (0.0.6)
+    turbot-api (0.0.9)
       rest-client (~> 1.6.1)
       rubyzip
 
