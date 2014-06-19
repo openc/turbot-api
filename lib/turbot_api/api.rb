@@ -101,7 +101,7 @@ module Turbot
         if method == :get || method == :delete
           response = RestClient.send(method, url, :params => params.merge(:api_key => @api_key))
         else
-          response = RestClient.send(method, url, params.merge(:api_key => @api_key))
+          response = RestClient.send(method, url, params.merge(:api_key => @api_key).to_json, :content_type => :json)
         end
         SuccessResponse.new(response)
       rescue RestClient::Exception => e
