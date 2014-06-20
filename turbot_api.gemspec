@@ -3,7 +3,7 @@ require "turbot_api/version"
 
 Gem::Specification.new do |gem|
   gem.name    = "turbot-api"
-  gem.version = Turbot::VERSION
+  gem.version = TurbotApi::VERSION
 
   gem.author      = "Turbot"
   gem.email       = "support@opencorporates.com"
