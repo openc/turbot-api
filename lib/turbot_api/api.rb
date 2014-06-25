@@ -45,8 +45,12 @@ module Turbot
       request(:post, "/api/bots", :bot => {:bot_id => bot_id, :config => config})
     end
 
-    def create_draft_data(bot_id, config, batch)
-      request(:post, "/api/bots/#{bot_id}/draft_data", :config => config, :batch => batch)
+    def update_bot(bot_id, config)
+      request(:put, "/api/bots/#{bot_id}", :bot => {:config => config})
+    end
+
+    def create_draft_data(bot_id, batch)
+      request(:post, "/api/bots/#{bot_id}/draft_data", :batch => batch)
     end
 
     def destroy_draft_data(bot_id)
