@@ -58,7 +58,14 @@ module Turbot
     end
 
     def update_code(bot_id, archive)
-      request(:put, "/api/bots/#{bot_id}/code", :archive => archive)
+      # We can't use #request here since we're not sending JSON
+      url = build_url("/api/bots/#{bot_id}/code")
+      begin
+        response = RestClient.put(url, :api_key => @api_key, :archive => archive)
+        SuccessResponse.new(response)
+      rescue RestClient::Exception => e
+        FailureResponse.new(e.response)
+      end
     end
 
     def start_run(bot_id)
@@ -93,13 +100,7 @@ module Turbot
     end
 
     def request(method, path, params={})
-      args = {
-        :host => @host,
-        :port => @port,
-        :scheme => @scheme,
-        :path => path.strip
-      }
-      url = URI::HTTP.build(args).to_s
+      url = build_url(path)
 
       begin
         if method == :get || method == :delete
@@ -111,6 +112,16 @@ module Turbot
       rescue RestClient::Exception => e
         FailureResponse.new(e.response)
       end
+    end
+
+    def build_url(path)
+      args = {
+        :host => @host,
+        :port => @port,
+        :scheme => @scheme,
+        :path => path.strip
+      }
+      url = URI::HTTP.build(args).to_s
     end
 
     class SuccessResponse
