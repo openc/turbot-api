@@ -1,3 +1,3 @@
-module TurbotApi
-  VERSION = "0.0.9"
+module Turbot
+  TURBOT_API_VERSION = "0.0.11"
 end
