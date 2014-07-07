@@ -97,7 +97,6 @@ module Turbot
         :path => path.strip
       }
       args[:query] = query_string unless query_string.empty?
-      puts "Requesting #{args.inspect}"
       URI::HTTP.build(args).to_s
     end
 
