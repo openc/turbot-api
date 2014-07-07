@@ -1,5 +1,6 @@
 require 'json'
 require 'rest_client'
+require 'cgi'
 
 module Turbot
   class API
@@ -87,7 +88,7 @@ module Turbot
 
     def server_req(path, params={})
       query_string = params.update(:api_key => @api_key).map do |k, v|
-        "#{k}=#{v}" if v
+        "#{k}=#{CGI::escape(v)}" if v
       end.compact.join("&")
       args = {
         :host => @host,
@@ -96,6 +97,7 @@ module Turbot
         :path => path.strip
       }
       args[:query] = query_string unless query_string.empty?
+      puts "Requesting #{args.inspect}"
       URI::HTTP.build(args).to_s
     end
 
