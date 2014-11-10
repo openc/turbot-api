@@ -50,6 +50,9 @@ module Turbot
       request(:put, "/api/bots/#{bot_id}", :bot => {:config => config})
     end
 
+    def show_manifest(bot_id)
+      request(:get, "/api/bots/#{bot_id}/manifest")
+
     def create_draft_data(bot_id, batch)
       request(:post, "/api/bots/#{bot_id}/draft_data", :batch => batch)
     end
