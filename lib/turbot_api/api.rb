@@ -42,12 +42,12 @@ module Turbot
       request(:get, "/api/bots/#{bot_id}")
     end
 
-    def create_bot(bot_id, config)
-      request(:post, "/api/bots", :bot => {:bot_id => bot_id, :config => config})
+    def create_bot(bot_id, config, env = nil)
+      request(:post, "/api/bots", :bot => {:bot_id => bot_id, :config => config, :env => env})
     end
 
-    def update_bot(bot_id, config)
-      request(:put, "/api/bots/#{bot_id}", :bot => {:config => config})
+    def update_bot(bot_id, config, env = nil)
+      request(:put, "/api/bots/#{bot_id}", :bot => {:config => config, :env => env})
     end
 
     def show_manifest(bot_id)
