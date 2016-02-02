@@ -1,5 +1,12 @@
 require 'turbot_api'
 
+require "simplecov"
+require "coveralls"
+SimpleCov.formatter = Coveralls::SimpleCov::Formatter
+SimpleCov.start do
+  add_filter "spec"
+end
+
 describe Turbot::API do
   before do
     @api = Turbot::API.new(:api_key => 'key', :host => 'example.com')
