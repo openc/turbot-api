@@ -1,11 +1,11 @@
-require 'turbot_api'
-
 require "simplecov"
 require "coveralls"
 SimpleCov.formatter = Coveralls::SimpleCov::Formatter
 SimpleCov.start do
   add_filter "spec"
 end
+
+require 'turbot_api'
 
 describe Turbot::API do
   before do
