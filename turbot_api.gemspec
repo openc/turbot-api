@@ -18,7 +18,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency "rest-client", "~> 1.6.1"
   gem.add_dependency "rubyzip"
   gem.add_development_dependency "coveralls"
-  gem.add_development_dependency "debugger"
   gem.add_development_dependency "excon"
   gem.add_development_dependency "fakefs"
   gem.add_development_dependency "fpm"
