@@ -8,7 +8,7 @@
 
 ## Releasing a new version
 
-Bump the version in `lib/turbot_api/version.rb` according to the [Semantic Versioning](http://semver.org/) convention, then:
+Bump the version in `lib/turbot/api/version.rb` according to the [Semantic Versioning](http://semver.org/) convention, then:
 
-    git commit lib/turbot_api/version.rb -m 'Release new version'
+    git commit lib/turbot/api/version.rb -m 'Release new version'
     rake release # requires Rubygems credentials
