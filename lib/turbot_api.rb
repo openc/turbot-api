@@ -1,1 +1,2 @@
-require 'turbot_api/api'
+# `require 'turbot_api'` is deprecated. Use `require 'turbot/api'`.
+require 'turbot/api'
