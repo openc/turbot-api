@@ -13,4 +13,4 @@ Bump the version in `lib/turbot/api/version.rb` according to the [Semantic Versi
     git commit lib/turbot/api/version.rb -m 'Release new version'
     rake release # requires Rubygems credentials
 
-Finally, deploy [morph](https://github.com/sebbacon/morph/).
+Finally, [rebuild the Docker image](https://github.com/openc/morph-docker-ruby#readme) and deploy [morph](https://github.com/sebbacon/morph/).
