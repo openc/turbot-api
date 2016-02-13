@@ -20,4 +20,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency('coveralls')
   gem.add_development_dependency('rake')
   gem.add_development_dependency('rspec', '~> 3.4')
+  gem.add_development_dependency('webmock')
 end

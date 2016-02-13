@@ -8,4 +8,8 @@ SimpleCov.start do
 end
 
 require 'rspec'
+require 'webmock/rspec'
+
+include WebMock::API
+
 require File.dirname(__FILE__) + '/../lib/turbot/api'
