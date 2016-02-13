@@ -157,26 +157,4 @@ RSpec.describe Turbot::API do
       expect(result).to be_a(Turbot::API::SuccessResponse)
     end
   end
-
-  describe '#start_run' do
-    it 'succeeds' do
-      expect(RestClient).to receive(:post).
-        with('http://example.com/api/bots/test-bot/run/start', JSON.dump(:api_key => 'key'), :content_type => :json).
-        and_return(double(:body => JSON.dump({})))
-
-      result = api.start_run('test-bot')
-      expect(result).to be_a(Turbot::API::SuccessResponse)
-    end
-  end
-
-  describe '#stop_run' do
-    it 'succeeds' do
-      expect(RestClient).to receive(:post).
-        with('http://example.com/api/bots/test-bot/run/stop', JSON.dump(:api_key => 'key'), :content_type => :json).
-        and_return(double(:body => JSON.dump({})))
-
-      result = api.stop_run('test-bot')
-      expect(result).to be_a(Turbot::API::SuccessResponse)
-    end
-  end
 end

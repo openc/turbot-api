@@ -6,6 +6,8 @@
 [![Coverage Status](https://coveralls.io/repos/openc/turbot-api/badge.png)](https://coveralls.io/r/openc/turbot-api)
 [![Code Climate](https://codeclimate.com/github/openc/turbot-api.png)](https://codeclimate.com/github/openc/turbot-api)
 
+See turbot_server for the API implementation.
+
 ## Releasing a new version
 
 Bump the version in `lib/turbot/api/version.rb` according to the [Semantic Versioning](http://semver.org/) convention, then:

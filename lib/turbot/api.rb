@@ -14,6 +14,8 @@ module Turbot
       @api_key = params[:api_key] || get_api_key_for_credentials(params[:username], params[:password])['api_key']
     end
 
+    # api/users#show in turbot_server.
+    #
     # @return [Hash] a hash with the user's details
     def get_user
       response = request(:get, '/api/user')
@@ -27,6 +29,8 @@ module Turbot
       get_user['api_key']
     end
 
+    # api/api_keys#show in turbot_server.
+    #
     # @return [Hash] a hash with a single key "api_key"
     def get_api_key_for_credentials(user, password)
       response = request(:get, '/api/user/api_key', {
@@ -38,54 +42,60 @@ module Turbot
       JSON.load(response.body)
     end
 
+    # api/bots#index in turbot_server.
+    #
     # @return [Turbot::API::SuccessResponse, Turbot::API::FailureResponse]
     def list_bots
       request(:get, '/api/bots')
     end
 
+    # api/bots#show in turbot_server.
+    #
     # @return [Turbot::API::SuccessResponse, Turbot::API::FailureResponse]
     def show_bot(bot_id)
       request(:get, "/api/bots/#{bot_id}")
     end
 
+    # api/bots#create in turbot_server.
+    #
     # @return [Turbot::API::SuccessResponse, Turbot::API::FailureResponse]
     def create_bot(bot_id, config, env = nil)
       request(:post, '/api/bots', :bot => {:bot_id => bot_id, :config => config, :env => env})
     end
 
+    # api/bots#update in turbot_server.
+    #
     # @return [Turbot::API::SuccessResponse, Turbot::API::FailureResponse]
     def update_bot(bot_id, config, env = nil)
       request(:put, "/api/bots/#{bot_id}", :bot => {:config => config, :env => env})
     end
 
+    # api/manifest#show in turbot_server.
+    #
     # @return [Turbot::API::SuccessResponse, Turbot::API::FailureResponse]
     def show_manifest(bot_id)
       request(:get, "/api/bots/#{bot_id}/manifest")
     end
 
+    # api/draft_data#create in turbot_server.
+    #
     # @return [Turbot::API::SuccessResponse, Turbot::API::FailureResponse]
     def create_draft_data(bot_id, batch)
       request(:post, "/api/bots/#{bot_id}/draft_data", :batch => batch)
     end
 
+    # api/draft_data#destroy in turbot_server.
+    #
     # @return [Turbot::API::SuccessResponse, Turbot::API::FailureResponse]
     def destroy_draft_data(bot_id)
       request(:delete, "/api/bots/#{bot_id}/draft_data")
     end
 
+    # api/code#update in turbot_server.
+    #
     # @return [Turbot::API::SuccessResponse, Turbot::API::FailureResponse]
     def update_code(bot_id, archive)
       request(:put, "/api/bots/#{bot_id}/code", {:archive => archive}, false)
-    end
-
-    # @return [Turbot::API::SuccessResponse, Turbot::API::FailureResponse]
-    def start_run(bot_id)
-      request(:post, "/api/bots/#{bot_id}/run/start")
-    end
-
-    # @return [Turbot::API::SuccessResponse, Turbot::API::FailureResponse]
-    def stop_run(bot_id)
-      request(:post, "/api/bots/#{bot_id}/run/stop")
     end
 
   private
