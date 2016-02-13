@@ -29,7 +29,6 @@ RSpec.describe Turbot::API do
       it 'succeeds' do
         result = api.get_user
         expect(result).to be_a(Hash)
-        expect(result).to eq(body)
       end
     end
 
@@ -54,7 +53,6 @@ RSpec.describe Turbot::API do
 
       result = api_without_key.get_api_key_for_credentials('email@example.com', 'pass')
       expect(result).to be_a(Hash)
-      expect(result).to eq(body)
     end
   end
 
@@ -64,7 +62,17 @@ RSpec.describe Turbot::API do
         with('http://example.com/api/bots', {:params => {:api_key => 'key'}}).
         and_return(double(:body => JSON.dump({})))
 
-      api.list_bots
+      result = api.list_bots
+      expect(result).to be_a(Turbot::API::SuccessResponse)
+    end
+
+    it 'fails' do
+      expect(RestClient).to receive(:get).
+        with('http://example.com/api/bots', {:params => {:api_key => 'key'}}).
+        and_raise(RestClient::Exception.new(RestClient::Response.create('{}', nil, {}, nil)))
+
+      result = api.list_bots
+      expect(result).to be_a(Turbot::API::FailureResponse)
     end
   end
 
@@ -74,7 +82,8 @@ RSpec.describe Turbot::API do
         with('http://example.com/api/bots/test-bot', {:params => {:api_key => 'key'}}).
         and_return(double(:body => JSON.dump({})))
 
-      api.show_bot('test-bot')
+      result = api.show_bot('test-bot')
+      expect(result).to be_a(Turbot::API::SuccessResponse)
     end
   end
 
@@ -84,7 +93,8 @@ RSpec.describe Turbot::API do
         with('http://example.com/api/bots', JSON.dump(:bot => {:bot_id => 'test-bot', :config => {}, :env => nil}, :api_key => 'key'), :content_type => :json).
         and_return(double(:body => JSON.dump({})))
 
-      api.create_bot('test-bot', {})
+      result = api.create_bot('test-bot', {})
+      expect(result).to be_a(Turbot::API::SuccessResponse)
     end
   end
 
@@ -94,7 +104,8 @@ RSpec.describe Turbot::API do
         with('http://example.com/api/bots/test-bot', JSON.dump(:bot => {:config => {}, :env => nil}, :api_key => 'key'), :content_type => :json).
         and_return(double(:body => JSON.dump({})))
 
-      api.update_bot('test-bot', {})
+      result = api.update_bot('test-bot', {})
+      expect(result).to be_a(Turbot::API::SuccessResponse)
     end
   end
 
@@ -104,7 +115,8 @@ RSpec.describe Turbot::API do
         with('http://example.com/api/bots/test-bot/manifest', {:params => {:api_key => 'key'}}).
         and_return(double(:body => JSON.dump({})))
 
-      api.show_manifest('test-bot')
+      result = api.show_manifest('test-bot')
+      expect(result).to be_a(Turbot::API::SuccessResponse)
     end
   end
 
@@ -114,7 +126,8 @@ RSpec.describe Turbot::API do
         with('http://example.com/api/bots/test-bot/draft_data', JSON.dump(:batch => {}, :api_key => 'key'), :content_type => :json).
         and_return(double(:body => JSON.dump({})))
 
-      api.create_draft_data('test-bot', {})
+      result = api.create_draft_data('test-bot', {})
+      expect(result).to be_a(Turbot::API::SuccessResponse)
     end
   end
 
@@ -124,7 +137,8 @@ RSpec.describe Turbot::API do
         with('http://example.com/api/bots/test-bot/draft_data', {:params => {:api_key => 'key'}}).
         and_return(double(:body => JSON.dump({})))
 
-      api.destroy_draft_data('test-bot')
+      result = api.destroy_draft_data('test-bot')
+      expect(result).to be_a(Turbot::API::SuccessResponse)
     end
   end
 
@@ -141,9 +155,6 @@ RSpec.describe Turbot::API do
 
       result = api.update_code('example', 'binary')
       expect(result).to be_a(Turbot::API::SuccessResponse)
-      expect(result.body).to eq(body)
-      expect(result.message).to eq(nil)
-      expect(result.data).to eq(data)
     end
   end
 
@@ -153,7 +164,8 @@ RSpec.describe Turbot::API do
         with('http://example.com/api/bots/test-bot/run/start', JSON.dump(:api_key => 'key'), :content_type => :json).
         and_return(double(:body => JSON.dump({})))
 
-      api.start_run('test-bot')
+      result = api.start_run('test-bot')
+      expect(result).to be_a(Turbot::API::SuccessResponse)
     end
   end
 
@@ -163,7 +175,8 @@ RSpec.describe Turbot::API do
         with('http://example.com/api/bots/test-bot/run/stop', JSON.dump(:api_key => 'key'), :content_type => :json).
         and_return(double(:body => JSON.dump({})))
 
-      api.stop_run('test-bot')
+      result = api.stop_run('test-bot')
+      expect(result).to be_a(Turbot::API::SuccessResponse)
     end
   end
 end
